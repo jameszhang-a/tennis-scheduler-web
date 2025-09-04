@@ -4,22 +4,27 @@
  */
 
 import { apiRequest, ApiError } from "./api-utils";
+import { API_ENDPOINTS } from "@/lib/types";
+import type {
+  HealthCheckResponse,
+  Schedule,
+  SchedulesFilters,
+  StatsResponse,
+  SchedulerStatusResponse,
+  TokenStatusResponse,
+  CancelScheduleResponse,
+} from "@/lib/types";
 
 /**
  * Health check API call
  */
-export async function getHealthCheck(): Promise<{
-  status: string;
-  service?: string;
-  timestamp: string;
-}> {
+export async function getHealthCheck(): Promise<HealthCheckResponse> {
   try {
-    const response = await apiRequest<{ status: string; service?: string }>(
-      "/api/health"
+    const response = await apiRequest<HealthCheckResponse>(
+      API_ENDPOINTS.HEALTH
     );
     return {
-      status: response.status || "healthy",
-      service: response.service,
+      ...response,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
@@ -33,12 +38,9 @@ export async function getHealthCheck(): Promise<{
 /**
  * Get all schedules with optional filtering
  */
-export async function getSchedules(filters?: {
-  status?: "pending" | "success" | "failed" | "cancelled";
-  court_id?: "1" | "2";
-  limit?: number;
-  offset?: number;
-}): Promise<any[]> {
+export async function getSchedules(
+  filters?: SchedulesFilters
+): Promise<Schedule[]> {
   const params = new URLSearchParams();
   if (filters?.status) params.append("status", filters.status);
   if (filters?.court_id) params.append("court_id", filters.court_id);
@@ -46,68 +48,60 @@ export async function getSchedules(filters?: {
   if (filters?.offset) params.append("offset", filters.offset.toString());
 
   const queryString = params.toString();
-  return apiRequest(`/api/schedules${queryString ? `?${queryString}` : ""}`);
+  return apiRequest<Schedule[]>(
+    `${API_ENDPOINTS.SCHEDULES}${queryString ? `?${queryString}` : ""}`
+  );
 }
 
 /**
  * Get schedule by ID
  */
-export async function getSchedule(id: string | number): Promise<any> {
-  return apiRequest(`/api/schedules/${id}`);
+export async function getSchedule(id: string | number): Promise<Schedule> {
+  return apiRequest<Schedule>(`${API_ENDPOINTS.SCHEDULES}/${id}`);
 }
 
 /**
  * Get upcoming schedules for the next N days
  */
-export async function getUpcomingSchedules(days: number = 7): Promise<any[]> {
-  return apiRequest(`/api/schedules/upcoming?days=${days}`);
+export async function getUpcomingSchedules(
+  days: number = 7
+): Promise<Schedule[]> {
+  return apiRequest<Schedule[]>(
+    `${API_ENDPOINTS.SCHEDULES_UPCOMING}?days=${days}`
+  );
 }
 
 /**
  * Cancel a schedule
  */
-export async function cancelSchedule(id: string | number): Promise<any> {
-  return apiRequest(`/api/schedules/${id}`, { method: "DELETE" });
+export async function cancelSchedule(
+  id: string | number
+): Promise<CancelScheduleResponse> {
+  return apiRequest<CancelScheduleResponse>(
+    `${API_ENDPOINTS.SCHEDULES}/${id}`,
+    { method: "DELETE" }
+  );
 }
 
 /**
  * Get statistics
  */
-export async function getStats(): Promise<{
-  total_schedules: number;
-  pending_schedules: number;
-  successful_schedules: number;
-  failed_schedules: number;
-  next_booking?: string;
-}> {
-  return apiRequest("/api/stats");
+export async function getStats(): Promise<StatsResponse> {
+  return apiRequest<StatsResponse>(API_ENDPOINTS.STATS);
 }
 
 /**
  * Get scheduler status
  */
-export async function getSchedulerStatus(): Promise<{
-  is_running: boolean;
-  total_jobs: number;
-  jobs: Array<{
-    job_id: string;
-    next_run_time: string;
-    name: string;
-  }>;
-}> {
-  return apiRequest("/api/scheduler/status");
+export async function getSchedulerStatus(): Promise<SchedulerStatusResponse> {
+  return apiRequest<SchedulerStatusResponse>(API_ENDPOINTS.SCHEDULER_STATUS);
 }
 
 /**
  * Get token status
  */
-export async function getTokenStatus(): Promise<{
-  has_refresh_token: boolean;
-  access_token_valid: boolean;
-  access_expiry: string;
-  refresh_expiry: string;
-}> {
-  return apiRequest("/api/token/status");
+export async function getTokenStatus(): Promise<TokenStatusResponse> {
+  return apiRequest<TokenStatusResponse>(API_ENDPOINTS.TOKEN_STATUS);
 }
 
 // Re-export ApiError for convenience

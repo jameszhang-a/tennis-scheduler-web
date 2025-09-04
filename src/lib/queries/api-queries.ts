@@ -11,6 +11,15 @@ import {
   ApiError,
 } from "@/lib/api";
 import { apiPost, apiPut } from "@/lib/api-utils";
+import type {
+  HealthCheckResponse,
+  Schedule,
+  SchedulesFilters,
+  StatsResponse,
+  SchedulerStatusResponse,
+  TokenStatusResponse,
+  CancelScheduleResponse,
+} from "@/lib/types";
 
 /**
  * Query Keys - Centralized key management for TanStack Query
@@ -20,7 +29,7 @@ export const queryKeys = {
   all: ["tennis-scheduler"] as const,
   health: () => [...queryKeys.all, "health"] as const,
   schedules: () => [...queryKeys.all, "schedules"] as const,
-  schedulesList: (filters?: Record<string, any>) =>
+  schedulesList: (filters?: SchedulesFilters) =>
     [...queryKeys.schedules(), "list", filters] as const,
   schedulesUpcoming: (days?: number) =>
     [...queryKeys.schedules(), "upcoming", days] as const,
@@ -41,7 +50,7 @@ export function useHealthCheck(options?: {
   enabled?: boolean;
   refetchInterval?: number;
 }) {
-  return useQuery({
+  return useQuery<HealthCheckResponse, ApiError>({
     queryKey: queryKeys.health(),
     queryFn: getHealthCheck,
     staleTime: 30 * 1000, // 30 seconds
@@ -66,7 +75,7 @@ export function useHealthCheck(options?: {
 export function useRefreshHealthCheck() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<HealthCheckResponse, ApiError, void>({
     mutationFn: getHealthCheck,
     onSuccess: (data) => {
       // Update the health check cache with fresh data
@@ -81,13 +90,8 @@ export function useRefreshHealthCheck() {
 /**
  * Schedules List Query Hook
  */
-export function useSchedules(filters?: {
-  status?: "pending" | "success" | "failed" | "cancelled";
-  court_id?: "1" | "2";
-  limit?: number;
-  offset?: number;
-}) {
-  return useQuery({
+export function useSchedules(filters?: SchedulesFilters) {
+  return useQuery<Schedule[], ApiError>({
     queryKey: queryKeys.schedulesList(filters),
     queryFn: () => getSchedules(filters),
     staleTime: 60 * 1000, // 1 minute
@@ -98,7 +102,7 @@ export function useSchedules(filters?: {
  * Upcoming Schedules Query Hook
  */
 export function useUpcomingSchedules(days: number = 7) {
-  return useQuery({
+  return useQuery<Schedule[], ApiError>({
     queryKey: queryKeys.schedulesUpcoming(days),
     queryFn: () => getUpcomingSchedules(days),
     staleTime: 60 * 1000, // 1 minute
@@ -109,7 +113,7 @@ export function useUpcomingSchedules(days: number = 7) {
  * Schedule Detail Query Hook
  */
 export function useSchedule(id: string | number) {
-  return useQuery({
+  return useQuery<Schedule, ApiError>({
     queryKey: queryKeys.schedulesDetail(id),
     queryFn: () => getSchedule(id),
     enabled: !!id,
@@ -121,7 +125,7 @@ export function useSchedule(id: string | number) {
  * Statistics Query Hook
  */
 export function useStats() {
-  return useQuery({
+  return useQuery<StatsResponse, ApiError>({
     queryKey: queryKeys.stats(),
     queryFn: getStats,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -132,7 +136,7 @@ export function useStats() {
  * Scheduler Status Query Hook
  */
 export function useSchedulerStatus() {
-  return useQuery({
+  return useQuery<SchedulerStatusResponse, ApiError>({
     queryKey: queryKeys.schedulerStatus(),
     queryFn: getSchedulerStatus,
     staleTime: 60 * 1000, // 1 minute
@@ -144,7 +148,7 @@ export function useSchedulerStatus() {
  * Token Status Query Hook
  */
 export function useTokenStatus() {
-  return useQuery({
+  return useQuery<TokenStatusResponse, ApiError>({
     queryKey: queryKeys.tokenStatus(),
     queryFn: getTokenStatus,
     staleTime: 60 * 1000, // 1 minute
@@ -157,7 +161,7 @@ export function useTokenStatus() {
 export function useCancelSchedule() {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<CancelScheduleResponse, ApiError, string | number>({
     mutationFn: (id: string | number) => cancelSchedule(id),
     onSuccess: (data, variables) => {
       // Invalidate and refetch related queries
@@ -186,7 +190,7 @@ export function useCreateMutation<TData = unknown, TVariables = unknown>(
     onError?: (error: ApiError, variables: TVariables) => void;
   }
 ) {
-  return useMutation({
+  return useMutation<TData, ApiError, TVariables>({
     mutationFn: (data: TVariables) => apiPost<TData>(endpoint, data),
     onSuccess: options?.onSuccess,
     onError: options?.onError,
@@ -203,7 +207,7 @@ export function useUpdateMutation<TData = unknown, TVariables = unknown>(
     onError?: (error: ApiError, variables: TVariables) => void;
   }
 ) {
-  return useMutation({
+  return useMutation<TData, ApiError, TVariables>({
     mutationFn: (data: TVariables) => apiPut<TData>(endpoint, data),
     onSuccess: options?.onSuccess,
     onError: options?.onError,

@@ -1,4 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
+import { ApiError } from "./api-utils";
 
 /**
  * Creates a new QueryClient instance with optimized defaults
@@ -12,10 +13,15 @@ export function makeQueryClient() {
         // above 0 to avoid refetching immediately on the client
         staleTime: 60 * 1000, // 1 minute
         gcTime: 5 * 60 * 1000, // 5 minutes (formerly cacheTime)
-        retry: (failureCount, error: any) => {
+        retry: (failureCount, error: Error) => {
           // Don't retry on 4xx errors except 408, 429
-          if (error?.status >= 400 && error?.status < 500) {
-            if (error?.status === 408 || error?.status === 429) {
+          if (
+            error instanceof ApiError &&
+            error.status &&
+            error.status >= 400 &&
+            error.status < 500
+          ) {
+            if (error.status === 408 || error.status === 429) {
               return failureCount < 2;
             }
             return false;
