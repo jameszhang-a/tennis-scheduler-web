@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
 import {
   Calendar,
@@ -13,17 +13,17 @@ import {
   AlertTriangle,
   CheckCircle,
   Menu,
-} from "lucide-react"
+} from "lucide-react";
 
-import { Home } from "lucide-react"
-import Link from "next/link"
-import { useState } from "react"
+import { Home } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function Sidebar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   function handleNavigation() {
-    setIsMobileMenuOpen(false)
+    setIsMobileMenuOpen(false);
   }
 
   function NavItem({
@@ -31,9 +31,9 @@ export default function Sidebar() {
     icon: Icon,
     children,
   }: {
-    href: string
-    icon: any
-    children: React.ReactNode
+    href: string;
+    icon: React.ComponentType<{ className?: string }>;
+    children: React.ReactNode;
   }) {
     return (
       <Link
@@ -44,7 +44,7 @@ export default function Sidebar() {
         <Icon className="h-4 w-4 mr-3 flex-shrink-0" />
         {children}
       </Link>
-    )
+    );
   }
 
   return (
@@ -65,7 +65,7 @@ export default function Sidebar() {
       >
         <div className="h-full flex flex-col">
           <Link
-            href="/dashboard"
+            href="/"
             className="h-16 px-6 flex items-center border-b border-gray-200 dark:border-[#1F1F23]"
           >
             <div className="flex items-center gap-3">
@@ -85,10 +85,10 @@ export default function Sidebar() {
                   Overview
                 </div>
                 <div className="space-y-1">
-                  <NavItem href="#" icon={Home}>
+                  <NavItem href="/" icon={Home}>
                     Dashboard
                   </NavItem>
-                  <NavItem href="#" icon={Calendar}>
+                  <NavItem href="/sessions" icon={Calendar}>
                     Sessions
                   </NavItem>
                   <NavItem href="#" icon={MapPin}>
@@ -150,5 +150,5 @@ export default function Sidebar() {
         />
       )}
     </>
-  )
+  );
 }
