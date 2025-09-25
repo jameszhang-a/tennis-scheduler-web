@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import {
   getHealthCheck,
   getSchedules,
@@ -8,6 +9,7 @@ import {
   getStats,
   getSchedulerStatus,
   getTokenStatus,
+  createSchedule,
   ApiError,
 } from "@/lib/api";
 import { apiPost, apiPut } from "@/lib/api-utils";
@@ -19,6 +21,8 @@ import type {
   SchedulerStatusResponse,
   TokenStatusResponse,
   CancelScheduleResponse,
+  CreateScheduleRequest,
+  CreateScheduleResponse,
 } from "@/lib/types";
 
 /**
@@ -45,18 +49,51 @@ export const queryKeys = {
 /**
  * Health Check Query Hook
  * Polls the backend health status with automatic refetching
+ * Only polls when tab is focused and visible to reduce unnecessary requests
  */
 export function useHealthCheck(options?: {
   enabled?: boolean;
   refetchInterval?: number;
 }) {
+  const [isTabVisible, setIsTabVisible] = useState(true);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsTabVisible(!document.hidden);
+    };
+
+    const handleFocus = () => {
+      setIsTabVisible(true);
+    };
+
+    const handleBlur = () => {
+      setIsTabVisible(false);
+    };
+
+    // Listen for visibility changes
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("blur", handleBlur);
+
+    // Set initial state
+    setIsTabVisible(!document.hidden && document.hasFocus());
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("blur", handleBlur);
+    };
+  }, []);
+
   return useQuery<HealthCheckResponse, ApiError>({
     queryKey: queryKeys.health(),
     queryFn: getHealthCheck,
     staleTime: 30 * 1000, // 30 seconds
-    refetchInterval: options?.refetchInterval ?? 30 * 1000, // Poll every 30 seconds
+    refetchInterval: isTabVisible
+      ? options?.refetchInterval ?? 30 * 1000
+      : false, // Only poll when tab is visible/focused
     refetchIntervalInBackground: false,
-    enabled: options?.enabled ?? true,
+    enabled: (options?.enabled ?? true) && isTabVisible, // Only enabled when tab is visible
     retry: (failureCount, error) => {
       // Don't retry too aggressively for health checks
       if (error instanceof ApiError && error.status === 0) {
@@ -163,7 +200,7 @@ export function useCancelSchedule() {
 
   return useMutation<CancelScheduleResponse, ApiError, string | number>({
     mutationFn: (id: string | number) => cancelSchedule(id),
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       // Invalidate and refetch related queries
       queryClient.invalidateQueries({
         queryKey: queryKeys.schedules(),
@@ -181,6 +218,29 @@ export function useCancelSchedule() {
 }
 
 /**
+ * Create Schedule Mutation Hook
+ */
+export function useCreateSchedule() {
+  const queryClient = useQueryClient();
+
+  return useMutation<CreateScheduleResponse, ApiError, CreateScheduleRequest>({
+    mutationFn: createSchedule,
+    onSuccess: () => {
+      // Invalidate and refetch related queries
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.schedules(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.stats(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.schedulerStatus(),
+      });
+    },
+  });
+}
+
+/**
  * Generic mutation hook for POST requests
  */
 export function useCreateMutation<TData = unknown, TVariables = unknown>(
@@ -192,8 +252,8 @@ export function useCreateMutation<TData = unknown, TVariables = unknown>(
 ) {
   return useMutation<TData, ApiError, TVariables>({
     mutationFn: (data: TVariables) => apiPost<TData>(endpoint, data),
-    onSuccess: options?.onSuccess,
-    onError: options?.onError,
+    onSuccess: options?.onSuccess ?? (() => {}),
+    onError: options?.onError ?? (() => {}),
   });
 }
 
@@ -209,7 +269,7 @@ export function useUpdateMutation<TData = unknown, TVariables = unknown>(
 ) {
   return useMutation<TData, ApiError, TVariables>({
     mutationFn: (data: TVariables) => apiPut<TData>(endpoint, data),
-    onSuccess: options?.onSuccess,
-    onError: options?.onError,
+    onSuccess: options?.onSuccess ?? (() => {}),
+    onError: options?.onError ?? (() => {}),
   });
 }

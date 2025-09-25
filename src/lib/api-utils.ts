@@ -2,7 +2,9 @@
  * API utility functions and helpers
  */
 
-const API_BASE_URL = "https://tennis-scheduler-tfc.fly.dev";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "https://tennis-scheduler-tfc.fly.dev";
 
 /**
  * Custom error class for API-related errors
@@ -78,20 +80,26 @@ export async function apiGet<T>(endpoint: string): Promise<T> {
  * Generic POST request
  */
 export async function apiPost<T>(endpoint: string, data?: unknown): Promise<T> {
-  return apiRequest<T>(endpoint, {
+  const options: RequestInit = {
     method: "POST",
-    body: data ? JSON.stringify(data) : undefined,
-  });
+  };
+  if (data) {
+    options.body = JSON.stringify(data);
+  }
+  return apiRequest<T>(endpoint, options);
 }
 
 /**
  * Generic PUT request
  */
 export async function apiPut<T>(endpoint: string, data?: unknown): Promise<T> {
-  return apiRequest<T>(endpoint, {
+  const options: RequestInit = {
     method: "PUT",
-    body: data ? JSON.stringify(data) : undefined,
-  });
+  };
+  if (data) {
+    options.body = JSON.stringify(data);
+  }
+  return apiRequest<T>(endpoint, options);
 }
 
 /**
