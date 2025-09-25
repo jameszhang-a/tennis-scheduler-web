@@ -200,7 +200,7 @@ export function useCancelSchedule() {
 
   return useMutation<CancelScheduleResponse, ApiError, string | number>({
     mutationFn: (id: string | number) => cancelSchedule(id),
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       // Invalidate and refetch related queries
       queryClient.invalidateQueries({
         queryKey: queryKeys.schedules(),
