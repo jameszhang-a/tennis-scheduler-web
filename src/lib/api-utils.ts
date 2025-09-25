@@ -2,7 +2,9 @@
  * API utility functions and helpers
  */
 
-const API_BASE_URL = "https://tennis-scheduler-tfc.fly.dev";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "https://tennis-scheduler-tfc.fly.dev";
 
 /**
  * Custom error class for API-related errors

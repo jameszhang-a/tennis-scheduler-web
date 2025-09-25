@@ -13,6 +13,8 @@ import type {
   SchedulerStatusResponse,
   TokenStatusResponse,
   CancelScheduleResponse,
+  CreateScheduleRequest,
+  CreateScheduleResponse,
 } from "@/lib/types";
 
 /**
@@ -102,6 +104,21 @@ export async function getSchedulerStatus(): Promise<SchedulerStatusResponse> {
  */
 export async function getTokenStatus(): Promise<TokenStatusResponse> {
   return apiRequest<TokenStatusResponse>(API_ENDPOINTS.TOKEN_STATUS);
+}
+
+/**
+ * Create a new schedule
+ */
+export async function createSchedule(
+  data: CreateScheduleRequest
+): Promise<CreateScheduleResponse> {
+  return apiRequest<CreateScheduleResponse>(API_ENDPOINTS.SCHEDULES, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 }
 
 // Re-export ApiError for convenience

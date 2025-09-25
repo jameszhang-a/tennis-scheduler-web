@@ -64,6 +64,22 @@ export type CancelScheduleResponse = {
   schedule_id: number;
 };
 
+export type CreateScheduleRequest = {
+  schedule_type: "one-off" | "recurring";
+  day_of_week?: "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT" | "SUN";
+  date?: string; // YYYY-MM-DD for one-off
+  time: string; // HH:MM format
+  court_id: "1" | "2";
+  occurrences?: number; // For recurring, defaults to 1
+  duration?: number; // Defaults to 60
+};
+
+export type CreateScheduleResponse = {
+  message: string;
+  created_schedules: Schedule[];
+  scheduler_jobs_added: number;
+};
+
 /**
  * API Endpoint Types for better type safety
  */

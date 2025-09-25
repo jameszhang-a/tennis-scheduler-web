@@ -107,7 +107,7 @@ export default function HealthCheck() {
 
         {health && (
           <span className="text-xs text-gray-400 dark:text-gray-500">
-            Auto-refresh: 30s
+            Auto-refresh: 30s (when tab focused)
           </span>
         )}
       </div>

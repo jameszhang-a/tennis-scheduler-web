@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Menu,
+  Plus,
 } from "lucide-react";
 
 import { Home } from "lucide-react";
@@ -102,9 +103,12 @@ export default function Sidebar() {
 
               <div>
                 <div className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  Booking
+                  Schedules
                 </div>
                 <div className="space-y-1">
+                  <NavItem href="/schedules" icon={Plus}>
+                    Create Schedule
+                  </NavItem>
                   <NavItem href="#" icon={Clock}>
                     Next Attempts
                   </NavItem>
