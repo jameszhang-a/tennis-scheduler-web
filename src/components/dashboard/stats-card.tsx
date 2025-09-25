@@ -4,7 +4,7 @@ import { BarChart3, TrendingUp, Calendar, AlertTriangle } from "lucide-react";
 import { useStats } from "@/lib/queries/api-queries";
 
 export default function StatsCard() {
-  const { data: stats, isLoading, isError, error } = useStats();
+  const { data: stats, isLoading, isError } = useStats();
 
   if (isLoading) {
     return (

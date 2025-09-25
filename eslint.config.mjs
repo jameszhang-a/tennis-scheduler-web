@@ -12,12 +12,51 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
+    rules: {
+      // Detect unused variables and function parameters
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+        },
+      ],
+      // Detect unused imports
+      "no-unused-vars": "off", // Turn off base rule as it conflicts with @typescript-eslint version
+      // Additional rules for better unused detection
+      "@typescript-eslint/no-unused-expressions": [
+        "error",
+        {
+          allowShortCircuit: true,
+          allowTernary: true,
+          allowTaggedTemplates: true,
+        },
+      ],
+      // Allow empty object types for React props and similar cases
+      "@typescript-eslint/no-empty-object-type": [
+        "error",
+        {
+          allowObjectTypes: "always",
+        },
+      ],
+      // Allow require imports in config files
+      "@typescript-eslint/no-require-imports": "off",
+    },
     ignores: [
       "node_modules/**",
       ".next/**",
       "out/**",
       "build/**",
+      "dist/**",
       "next-env.d.ts",
+      "**/*.config.js",
+      "**/*.config.mjs",
+      "**/*.config.ts",
+      "tailwind.config.js",
+      "postcss.config.mjs",
     ],
   },
 ];

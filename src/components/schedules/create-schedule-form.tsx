@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -22,10 +21,8 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -40,8 +37,8 @@ import type { CreateScheduleRequest } from "@/lib/types";
 
 type FormValues = {
   schedule_type: "one-off" | "recurring";
-  day_of_week?: "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT" | "SUN";
-  date?: string;
+  day_of_week: "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT" | "SUN";
+  date: string;
   time: string;
   court_id: "1" | "2";
   occurrences: number;
@@ -144,9 +141,9 @@ export default function CreateScheduleForm({
     form.setValue("schedule_type", type);
     // Clear the conditional fields when switching types
     if (type === "one-off") {
-      form.setValue("day_of_week", undefined);
+      form.setValue("day_of_week", "MON");
     } else {
-      form.setValue("date", undefined);
+      form.setValue("date", "");
     }
   };
 

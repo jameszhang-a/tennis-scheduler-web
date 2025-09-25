@@ -252,8 +252,8 @@ export function useCreateMutation<TData = unknown, TVariables = unknown>(
 ) {
   return useMutation<TData, ApiError, TVariables>({
     mutationFn: (data: TVariables) => apiPost<TData>(endpoint, data),
-    onSuccess: options?.onSuccess,
-    onError: options?.onError,
+    onSuccess: options?.onSuccess ?? (() => {}),
+    onError: options?.onError ?? (() => {}),
   });
 }
 
@@ -269,7 +269,7 @@ export function useUpdateMutation<TData = unknown, TVariables = unknown>(
 ) {
   return useMutation<TData, ApiError, TVariables>({
     mutationFn: (data: TVariables) => apiPut<TData>(endpoint, data),
-    onSuccess: options?.onSuccess,
-    onError: options?.onError,
+    onSuccess: options?.onSuccess ?? (() => {}),
+    onError: options?.onError ?? (() => {}),
   });
 }
