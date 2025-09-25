@@ -225,7 +225,7 @@ export function useCreateSchedule() {
 
   return useMutation<CreateScheduleResponse, ApiError, CreateScheduleRequest>({
     mutationFn: createSchedule,
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate and refetch related queries
       queryClient.invalidateQueries({
         queryKey: queryKeys.schedules(),
