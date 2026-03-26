@@ -2,19 +2,7 @@
 
 import type React from "react";
 
-import {
-  Calendar,
-  Clock,
-  MapPin,
-  Settings,
-  Trophy,
-  Users,
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-  Menu,
-  Plus,
-} from "lucide-react";
+import { Trophy, Menu, Plus } from "lucide-react";
 
 import { Home } from "lucide-react";
 import Link from "next/link";
@@ -80,67 +68,12 @@ export default function Sidebar() {
           </Link>
 
           <div className="flex-1 overflow-y-auto py-4 px-4">
-            <div className="space-y-6">
-              <div>
-                <div className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  Overview
-                </div>
-                <div className="space-y-1">
-                  <NavItem href="/" icon={Home}>
-                    Dashboard
-                  </NavItem>
-                  <NavItem href="/sessions" icon={Calendar}>
-                    Sessions
-                  </NavItem>
-                  <NavItem href="#" icon={MapPin}>
-                    Courts
-                  </NavItem>
-                  <NavItem href="#" icon={Activity}>
-                    Analytics
-                  </NavItem>
-                </div>
-              </div>
-
-              <div>
-                <div className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  Schedules
-                </div>
-                <div className="space-y-1">
-                  <NavItem href="/schedules" icon={Plus}>
-                    Create Schedule
-                  </NavItem>
-                  <NavItem href="#" icon={Clock}>
-                    Next Attempts
-                  </NavItem>
-                  <NavItem href="#" icon={CheckCircle}>
-                    Successful
-                  </NavItem>
-                  <NavItem href="#" icon={AlertTriangle}>
-                    Failed
-                  </NavItem>
-                </div>
-              </div>
-
-              <div>
-                <div className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  Management
-                </div>
-                <div className="space-y-1">
-                  <NavItem href="#" icon={Users}>
-                    Players
-                  </NavItem>
-                  <NavItem href="#" icon={Trophy}>
-                    Tournaments
-                  </NavItem>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="px-4 py-4 border-t border-gray-200 dark:border-[#1F1F23]">
             <div className="space-y-1">
-              <NavItem href="#" icon={Settings}>
-                Settings
+              <NavItem href="/" icon={Home}>
+                Dashboard
+              </NavItem>
+              <NavItem href="/schedules" icon={Plus}>
+                Create Schedule
               </NavItem>
             </div>
           </div>

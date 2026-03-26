@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /Users/james/code/project/tennis-scheduler-web -maxdepth 2 -name *.test.* -o -name *.spec.*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm build:*)"
+    ]
+  }
+}

@@ -10,6 +10,21 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  {
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      "out/**",
+      "build/**",
+      "dist/**",
+      "next-env.d.ts",
+      "**/*.config.js",
+      "**/*.config.mjs",
+      "**/*.config.ts",
+      "tailwind.config.js",
+      "postcss.config.mjs",
+    ],
+  },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     rules: {
@@ -45,19 +60,6 @@ const eslintConfig = [
       // Allow require imports in config files
       "@typescript-eslint/no-require-imports": "off",
     },
-    ignores: [
-      "node_modules/**",
-      ".next/**",
-      "out/**",
-      "build/**",
-      "dist/**",
-      "next-env.d.ts",
-      "**/*.config.js",
-      "**/*.config.mjs",
-      "**/*.config.ts",
-      "tailwind.config.js",
-      "postcss.config.mjs",
-    ],
   },
 ];
 
