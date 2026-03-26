@@ -1,5 +1,7 @@
 import HealthCheck from "./health-check";
 import StatsCard from "./stats-card";
+import NextUpCard from "./next-up-card";
+import ScheduleList from "./schedule-list";
 
 export default function Content() {
   return (
@@ -12,6 +14,10 @@ export default function Content() {
           <StatsCard />
         </div>
       </div>
+
+      <NextUpCard />
+
+      <ScheduleList />
     </div>
   );
 }
